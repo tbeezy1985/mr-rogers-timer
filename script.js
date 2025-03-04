@@ -1,7 +1,7 @@
 let timer;
 let timeLeft;
 let darkMode = false;
-const bellSound = new Audio('bell.mp3');
+const bellSound = new Audio('https://tbeezy1985.github.io/mr-rogers-timer/assets/bell.mp3');
 
 function startTimer(minutes, message, showGif = false, isLongBreak = false) {
     clearInterval(timer);
@@ -21,7 +21,7 @@ function startTimer(minutes, message, showGif = false, isLongBreak = false) {
         updateDisplay();
         if (timeLeft <= 0) {
             clearInterval(timer);
-            bellSound.play();
+            bellSound.play().catch(error => console.log("Audio play failed:", error));
             showNotification(message);
             if (showGif) {
                 showMrRogersGif();
@@ -47,7 +47,7 @@ function startBreak(minutes) {
 function setCustomTimer() {
     let minutes = prompt("Enter timer duration in minutes:");
     if (minutes && !isNaN(minutes) && minutes > 0) {
-        startTimer(parseInt(minutes), "Custom timer completed!");
+        startTimer(parseInt(minutes), "Custom timer completed!", true);
     }
 }
 
@@ -70,7 +70,7 @@ function showNotification(message) {
 
 function showMrRogersGif() {
     const img = document.createElement("img");
-    img.src = "mr-rogers-proud-of-you.gif";
+    img.src = "https://raw.githubusercontent.com/tbeezy1985/mr-rogers-timer/main/mr-rogers-proud-of-you.gif";
     img.style.width = "300px";
     img.style.marginTop = "20px";
     document.body.appendChild(img);
