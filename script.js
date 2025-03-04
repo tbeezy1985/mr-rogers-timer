@@ -1,19 +1,30 @@
 let timer;
 let timeLeft;
+let darkMode = false;
+const bellSound = new Audio('bell.mp3');
 
-function startTimer(minutes, message) {
+function startTimer(minutes, message, showGif = false, isLongBreak = false) {
     clearInterval(timer);
     timeLeft = minutes * 60;
     updateDisplay();
+
+    if (isLongBreak) {
+        let goToNetflix = confirm("Would you like to watch a show on Netflix during your break? Click 'OK' to go to Netflix or 'Cancel' to start the timer.");
+        if (goToNetflix) {
+            window.open("https://www.netflix.com/browse", "_blank");
+            return;
+        }
+    }
 
     timer = setInterval(() => {
         timeLeft--;
         updateDisplay();
         if (timeLeft <= 0) {
             clearInterval(timer);
+            bellSound.play();
             showNotification(message);
-            if (message.includes("Mr. Rogers")) {
-                showMrRogersMessage();
+            if (showGif) {
+                showMrRogersGif();
             }
         }
     }, 1000);
@@ -26,11 +37,23 @@ function updateDisplay() {
 }
 
 function startWorkSession() {
-    startTimer(20, "Mr. Rogers: 'I'm proud of you, you know that.'\nStart your break.");
+    startTimer(20, "Mr. Rogers: 'I'm proud of you, you know that.'\nStart your break.", true);
 }
 
 function startBreak(minutes) {
-    startTimer(minutes, "Break over! Ready for another work session?");
+    startTimer(minutes, "Break over! Ready for another work session?", false, minutes === 23);
+}
+
+function setCustomTimer() {
+    let minutes = prompt("Enter timer duration in minutes:");
+    if (minutes && !isNaN(minutes) && minutes > 0) {
+        startTimer(parseInt(minutes), "Custom timer completed!");
+    }
+}
+
+function toggleDarkMode() {
+    darkMode = !darkMode;
+    document.body.classList.toggle("dark-mode", darkMode);
 }
 
 function showNotification(message) {
@@ -45,9 +68,9 @@ function showNotification(message) {
     }
 }
 
-function showMrRogersMessage() {
+function showMrRogersGif() {
     const img = document.createElement("img");
-    img.src = "https://i.imgur.com/nM5Z3vX.jpeg"; // Replace with a permanent image URL
+    img.src = "mr-rogers-proud-of-you.gif";
     img.style.width = "300px";
     img.style.marginTop = "20px";
     document.body.appendChild(img);
