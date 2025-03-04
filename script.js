@@ -70,7 +70,7 @@ function showNotification(message) {
 
 function showMrRogersGif() {
     const img = document.createElement("img");
-    img.src = "https://raw.githubusercontent.com/tbeezy1985/mr-rogers-timer/main/mr-rogers-proud-of-you.gif";
+    img.src = "https://tbeezy1985.github.io/mr-rogers-timer/assets/mr-rogers-proud-of-you.gif";
     img.style.width = "300px";
     img.style.marginTop = "20px";
     document.body.appendChild(img);
