@@ -4,24 +4,72 @@ document.addEventListener("DOMContentLoaded", function () {
     let addTaskBtn = document.getElementById("addTaskBtn");
     let sendTaskBtn = document.getElementById("sendTaskBtn");
     let darkModeToggle = document.querySelector("button[onclick='toggleDarkMode()']");
+    let startWorkBtn = document.querySelector("button[onclick='startWorkSession()']");
+    let shortBreakBtn = document.querySelector("button[onclick='startBreak(5)']");
+    let longBreakBtn = document.querySelector("button[onclick='startBreak(23)']");
+    let customTimerBtn = document.querySelector("button[onclick='setCustomTimer()']");
 
-    if (addTaskBtn) {
-        addTaskBtn.addEventListener("click", addTask);
-    }
-
-    if (sendTaskBtn) {
-        sendTaskBtn.addEventListener("click", sendTaskList);
-    }
-
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener("click", toggleDarkMode);
-    }
+    if (addTaskBtn) addTaskBtn.addEventListener("click", addTask);
+    if (sendTaskBtn) sendTaskBtn.addEventListener("click", sendTaskList);
+    if (darkModeToggle) darkModeToggle.addEventListener("click", toggleDarkMode);
+    if (startWorkBtn) startWorkBtn.addEventListener("click", startWorkSession);
+    if (shortBreakBtn) shortBreakBtn.addEventListener("click", function() { startBreak(5); });
+    if (longBreakBtn) longBreakBtn.addEventListener("click", function() { startBreak(23); });
+    if (customTimerBtn) customTimerBtn.addEventListener("click", setCustomTimer);
 
     // Ensure dark mode is enabled by default and remembers preference
     if (localStorage.getItem("darkMode") === "enabled") {
         document.body.classList.add("dark-mode");
     }
 });
+
+function startTimer(minutes, message, showGif = false, isLongBreak = false) {
+    clearInterval(timer);
+    timeLeft = minutes * 60;
+    updateDisplay();
+
+    if (isLongBreak) {
+        let goToNetflix = confirm("Would you like to watch a show on Netflix during your break? Click 'OK' to go to Netflix or 'Cancel' to start the timer.");
+        if (goToNetflix) {
+            window.open("https://www.netflix.com/browse", "_blank");
+            return;
+        }
+    }
+
+    timer = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            bellSound.play().catch(error => console.log("Audio play failed:", error));
+            showNotification(message);
+            if (showGif) {
+                showMrRogersGif();
+            }
+        }
+    }, 1000);
+}
+
+function updateDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById("timer").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+function startWorkSession() {
+    startTimer(20, "Mr. Brauker: 'I'm proud of you, you know that.'\nStart your break.", true);
+}
+
+function startBreak(minutes) {
+    startTimer(minutes, "Break over! Ready for another work session?", false, minutes === 23);
+}
+
+function setCustomTimer() {
+    let minutes = prompt("Enter timer duration in minutes:");
+    if (minutes && !isNaN(minutes) && minutes > 0) {
+        startTimer(parseInt(minutes), "Custom timer completed!", true);
+    }
+}
 
 function toggleDarkMode() {
     if (document.body.classList.contains("dark-mode")) {
@@ -88,4 +136,24 @@ function sendTaskList() {
 
     alert("Tasks logged successfully!");
     document.getElementById("taskList").innerHTML = "";
+}
+
+function showNotification(message) {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                new Notification("Time's Up!", { body: message });
+            }
+        });
+    } else {
+        alert(message);
+    }
+}
+
+function showMrRogersGif() {
+    const img = document.createElement("img");
+    img.src = "https://tbeezy1985.github.io/mr-rogers-timer/assets/mr-rogers-proud-of-you.gif";
+    img.style.width = "300px";
+    img.style.marginTop = "20px";
+    document.body.appendChild(img);
 }
