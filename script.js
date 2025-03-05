@@ -60,13 +60,28 @@ function toggleDarkMode() {
 function addTask() {
     let taskInput = document.getElementById("taskInput");
     let task = taskInput.value.trim();
+
     if (task !== "") {
         tasks.push(task);
+
         let taskList = document.getElementById("taskList");
         let li = document.createElement("li");
         li.textContent = task;
+
+        // Add a remove button for each task
+        let removeButton = document.createElement("button");
+        removeButton.textContent = "❌";
+        removeButton.style.marginLeft = "10px";
+        removeButton.onclick = function() {
+            taskList.removeChild(li);
+            tasks = tasks.filter(t => t !== task);
+        };
+
+        li.appendChild(removeButton);
         taskList.appendChild(li);
         taskInput.value = "";
+    } else {
+        alert("Please enter a task before adding.");
     }
 }
 
