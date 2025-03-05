@@ -1,128 +1,77 @@
-let timer;
-let timeLeft;
-let darkMode = false;
-const bellSound = new Audio('https://tbeezy1985.github.io/mr-rogers-timer/assets/bell.mp3');
-let tasks = [];
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded, adding event listeners.");
 
-function startTimer(minutes, message, showGif = false, isLongBreak = false) {
-    clearInterval(timer);
-    timeLeft = minutes * 60;
-    updateDisplay();
+    let addTaskBtn = document.getElementById("addTaskBtn");
+    let sendTaskBtn = document.getElementById("sendTaskBtn");
 
-    if (isLongBreak) {
-        let goToNetflix = confirm("Would you like to watch a show on Netflix during your break? Click 'OK' to go to Netflix or 'Cancel' to start the timer.");
-        if (goToNetflix) {
-            window.open("https://www.netflix.com/browse", "_blank");
-            return;
-        }
+    if (addTaskBtn) {
+        addTaskBtn.addEventListener("click", addTask);
+        console.log("Add Task button listener added.");
+    } else {
+        console.error("Add Task button not found!");
     }
 
-    timer = setInterval(() => {
-        timeLeft--;
-        updateDisplay();
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            bellSound.play().catch(error => console.log("Audio play failed:", error));
-            showNotification(message);
-            if (showGif) {
-                showMrRogersGif();
-            }
-        }
-    }, 1000);
-}
-
-function updateDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById("timer").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-}
-
-function startWorkSession() {
-    startTimer(20, "Mr. Brauker: 'I'm proud of you, you know that.'\nStart your break.", true);
-}
-
-function startBreak(minutes) {
-    startTimer(minutes, "Break over! Ready for another work session?", false, minutes === 23);
-}
-
-function setCustomTimer() {
-    let minutes = prompt("Enter timer duration in minutes:");
-    if (minutes && !isNaN(minutes) && minutes > 0) {
-        startTimer(parseInt(minutes), "Custom timer completed!", true);
+    if (sendTaskBtn) {
+        sendTaskBtn.addEventListener("click", sendTaskList);
+        console.log("Send Task List button listener added.");
+    } else {
+        console.error("Send Task List button not found!");
     }
-}
-
-function toggleDarkMode() {
-    darkMode = !darkMode;
-    document.body.classList.toggle("dark-mode", darkMode);
-}
+});
 
 function addTask() {
+    console.log("Add Task button clicked");
+
     let taskInput = document.getElementById("taskInput");
-    let task = taskInput.value.trim();
+    let taskList = document.getElementById("taskList");
 
-    if (task !== "") {
-        tasks.push(task);
-
-        let taskList = document.getElementById("taskList");
-        let li = document.createElement("li");
-        li.textContent = task;
-
-        // Add a remove button for each task
-        let removeButton = document.createElement("button");
-        removeButton.textContent = "❌";
-        removeButton.style.marginLeft = "10px";
-        removeButton.onclick = function() {
-            taskList.removeChild(li);
-            tasks = tasks.filter(t => t !== task);
-        };
-
-        li.appendChild(removeButton);
-        taskList.appendChild(li);
-        taskInput.value = "";
-
-        console.log("Task added:", task); // Debugging log
-    } else {
-        alert("Please enter a task before adding.");
+    if (!taskInput || !taskList) {
+        console.error("Task input or list not found!");
+        return;
     }
+
+    let task = taskInput.value.trim();
+    if (task === "") {
+        alert("Please enter a task before adding.");
+        return;
+    }
+
+    let li = document.createElement("li");
+    li.textContent = task;
+
+    let removeButton = document.createElement("button");
+    removeButton.textContent = "❌";
+    removeButton.style.marginLeft = "10px";
+    removeButton.onclick = function () {
+        taskList.removeChild(li);
+    };
+
+    li.appendChild(removeButton);
+    taskList.appendChild(li);
+    taskInput.value = "";
+
+    console.log("Task added:", task);
 }
 
 function sendTaskList() {
-    if (tasks.length === 0) {
-        alert("No tasks to log.");
-        return;
-    }
+    console.log("Send Task List button clicked");
 
     let formURL = "https://docs.google.com/forms/d/e/1FAIpQLScYQMt86ohmIy9xcEgjFrxSSoa_w56FuYBIULG0hnx8jgsoag/formResponse";
     let entryID = "entry.2065484795"; // Your actual Entry ID
 
-    tasks.forEach(task => {
+    let taskList = document.getElementById("taskList").getElementsByTagName("li");
+    if (taskList.length === 0) {
+        alert("No tasks to log.");
+        return;
+    }
+
+    for (let i = 0; i < taskList.length; i++) {
+        let task = taskList[i].textContent.replace("❌", "").trim();
         let fullURL = `${formURL}?${entryID}=${encodeURIComponent(task)}`;
-        console.log("Submitting task:", task, "to", fullURL); // Debugging log
+        console.log("Submitting task:", task, "to", fullURL);
         window.open(fullURL, "_blank");
-    });
+    }
 
     alert("Tasks logged successfully!");
-    tasks = [];
     document.getElementById("taskList").innerHTML = "";
-}
-
-function showNotification(message) {
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                new Notification("Time's Up!", { body: message });
-            }
-        });
-    } else {
-        alert(message);
-    }
-}
-
-function showMrRogersGif() {
-    const img = document.createElement("img");
-    img.src = "https://tbeezy1985.github.io/mr-rogers-timer/assets/mr-rogers-proud-of-you.gif";
-    img.style.width = "300px";
-    img.style.marginTop = "20px";
-    document.body.appendChild(img);
 }
