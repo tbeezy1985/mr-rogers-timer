@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. Rogers Productivity Timer</title>
+    <title>Mr. Brauker Productivity Timer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Mr. Rogers Productivity Timer</h1>
+        <h1>Mr. Brauker Productivity Timer</h1>
         <div id="timer">20:00</div>
         <div class="buttons">
             <button onclick="startWorkSession()">Start Work</button>
@@ -17,10 +17,15 @@
             <button onclick="setCustomTimer()">Set Custom Timer</button>
             <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
         </div>
+        
+        <h2>Task Log</h2>
+        <input type="text" id="taskInput" placeholder="Enter completed task...">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="taskList"></ul>
+        <button onclick="sendTaskList()">Send Task List</button>
     </div>
 
     <audio id="bellSound" src="bell.mp3"></audio>
-
     <script src="script.js"></script>
 </body>
 </html>
