@@ -3,21 +3,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let addTaskBtn = document.getElementById("addTaskBtn");
     let sendTaskBtn = document.getElementById("sendTaskBtn");
+    let darkModeToggle = document.querySelector("button[onclick='toggleDarkMode()']");
 
     if (addTaskBtn) {
         addTaskBtn.addEventListener("click", addTask);
-        console.log("Add Task button listener added.");
-    } else {
-        console.error("Add Task button not found!");
     }
 
     if (sendTaskBtn) {
         sendTaskBtn.addEventListener("click", sendTaskList);
-        console.log("Send Task List button listener added.");
-    } else {
-        console.error("Send Task List button not found!");
+    }
+
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener("click", toggleDarkMode);
+    }
+
+    // Ensure dark mode is enabled by default and remembers preference
+    if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark-mode");
     }
 });
+
+function toggleDarkMode() {
+    if (document.body.classList.contains("dark-mode")) {
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("darkMode", "disabled");
+    } else {
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("darkMode", "enabled");
+    }
+}
 
 function addTask() {
     console.log("Add Task button clicked");
