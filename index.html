@@ -6,10 +6,10 @@
     <title>Mr. Brauker Productivity Timer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="dark-mode"> <!-- Dark mode enabled by default -->
     <div class="container">
         <h1>Mr. Brauker Productivity Timer</h1>
-        <div id="timer">20:00</div>
+        <div id="timer" class="large-timer">20:00</div> <!-- Enlarged Timer -->
         <div class="buttons">
             <button onclick="startWorkSession()">Start Work</button>
             <button onclick="startBreak(5)">Short Break (5 min)</button>
@@ -17,12 +17,12 @@
             <button onclick="setCustomTimer()">Set Custom Timer</button>
             <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
         </div>
-        
+
         <h2>Task Log</h2>
         <input type="text" id="taskInput" placeholder="Enter completed task...">
-        <button onclick="addTask()">Add Task</button>
+        <button id="addTaskBtn">Add Task</button>
         <ul id="taskList"></ul>
-        <button onclick="sendTaskList()">Send Task List</button>
+        <button id="sendTaskBtn">Send Task List</button>
     </div>
 
     <audio id="bellSound" src="bell.mp3"></audio>
