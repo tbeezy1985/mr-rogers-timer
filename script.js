@@ -2,6 +2,7 @@ let timer;
 let timeLeft;
 let darkMode = false;
 const bellSound = new Audio('https://tbeezy1985.github.io/mr-rogers-timer/assets/bell.mp3');
+let tasks = [];
 
 function startTimer(minutes, message, showGif = false, isLongBreak = false) {
     clearInterval(timer);
@@ -37,7 +38,7 @@ function updateDisplay() {
 }
 
 function startWorkSession() {
-    startTimer(20, "Mr. Rogers: 'I'm proud of you, you know that.'\nStart your break.", true);
+    startTimer(20, "Mr. Brauker: 'I'm proud of you, you know that.'\nStart your break.", true);
 }
 
 function startBreak(minutes) {
@@ -54,6 +55,38 @@ function setCustomTimer() {
 function toggleDarkMode() {
     darkMode = !darkMode;
     document.body.classList.toggle("dark-mode", darkMode);
+}
+
+function addTask() {
+    let taskInput = document.getElementById("taskInput");
+    let task = taskInput.value.trim();
+    if (task !== "") {
+        tasks.push(task);
+        let taskList = document.getElementById("taskList");
+        let li = document.createElement("li");
+        li.textContent = task;
+        taskList.appendChild(li);
+        taskInput.value = "";
+    }
+}
+
+function sendTaskList() {
+    if (tasks.length === 0) {
+        alert("No tasks to log.");
+        return;
+    }
+
+    let formURL = "https://docs.google.com/forms/d/e/1FAIpQLScYQMt86ohmIy9xcEgjFrxSSoa_w56FuYBIULG0hnx8jgsoag/formResponse";
+    let entryID = "entry.2065484795"; // Your actual Entry ID
+
+    tasks.forEach(task => {
+        let fullURL = `${formURL}?${entryID}=${encodeURIComponent(task)}`;
+        window.open(fullURL, "_blank");
+    });
+
+    alert("Tasks logged successfully!");
+    tasks = [];
+    document.getElementById("taskList").innerHTML = "";
 }
 
 function showNotification(message) {
