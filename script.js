@@ -80,6 +80,8 @@ function addTask() {
         li.appendChild(removeButton);
         taskList.appendChild(li);
         taskInput.value = "";
+
+        console.log("Task added:", task); // Debugging log
     } else {
         alert("Please enter a task before adding.");
     }
@@ -96,6 +98,7 @@ function sendTaskList() {
 
     tasks.forEach(task => {
         let fullURL = `${formURL}?${entryID}=${encodeURIComponent(task)}`;
+        console.log("Submitting task:", task, "to", fullURL); // Debugging log
         window.open(fullURL, "_blank");
     });
 
