@@ -3,18 +3,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let addTaskBtn = document.getElementById("addTaskBtn");
     let sendTaskBtn = document.getElementById("sendTaskBtn");
-    let darkModeToggle = document.querySelector("button[onclick='toggleDarkMode()']");
-    let startWorkBtn = document.querySelector("button[onclick='startWorkSession()']");
-    let shortBreakBtn = document.querySelector("button[onclick='startBreak(5)']");
-    let longBreakBtn = document.querySelector("button[onclick='startBreak(23)']");
-    let customTimerBtn = document.querySelector("button[onclick='setCustomTimer()']");
+    let darkModeToggle = document.getElementById("toggleDarkModeBtn");
+    let startWorkBtn = document.getElementById("startWorkBtn");
+    let shortBreakBtn = document.getElementById("shortBreakBtn");
+    let longBreakBtn = document.getElementById("longBreakBtn");
+    let customTimerBtn = document.getElementById("customTimerBtn");
 
     if (addTaskBtn) addTaskBtn.addEventListener("click", addTask);
     if (sendTaskBtn) sendTaskBtn.addEventListener("click", sendTaskList);
     if (darkModeToggle) darkModeToggle.addEventListener("click", toggleDarkMode);
     if (startWorkBtn) startWorkBtn.addEventListener("click", startWorkSession);
-    if (shortBreakBtn) shortBreakBtn.addEventListener("click", function() { startBreak(5); });
-    if (longBreakBtn) longBreakBtn.addEventListener("click", function() { startBreak(23); });
+    if (shortBreakBtn) shortBreakBtn.addEventListener("click", () => startBreak(5));
+    if (longBreakBtn) longBreakBtn.addEventListener("click", () => startBreak(23));
     if (customTimerBtn) customTimerBtn.addEventListener("click", setCustomTimer);
 
     // Ensure dark mode is enabled by default and remembers preference
