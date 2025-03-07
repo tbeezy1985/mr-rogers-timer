@@ -118,24 +118,30 @@ function addTask() {
 function sendTaskList() {
     console.log("Send Task List button clicked");
 
-    let formURL = "https://docs.google.com/forms/d/e/1FAIpQLScYQMt86ohmIy9xcEgjFrxSSoa_w56FuYBIULG0hnx8jgsoag/formResponse";
-    let entryID = "entry.2065484795"; // Your actual Entry ID
-
-    let taskList = document.getElementById("taskList").getElementsByTagName("li");
-    if (taskList.length === 0) {
-        alert("No tasks to log.");
+    let email = prompt("Enter the email address to send the task list:");
+    if (!email) {
+        alert("Email not entered. Task list not sent.");
         return;
     }
 
-    for (let i = 0; i < taskList.length; i++) {
-        let task = taskList[i].textContent.replace("❌", "").trim();
-        let fullURL = `${formURL}?${entryID}=${encodeURIComponent(task)}`;
-        console.log("Submitting task:", task, "to", fullURL);
-        window.open(fullURL, "_blank");
+    let taskList = document.getElementById("taskList").getElementsByTagName("li");
+    if (taskList.length === 0) {
+        alert("No tasks to send.");
+        return;
     }
 
-    alert("Tasks logged successfully!");
-    document.getElementById("taskList").innerHTML = "";
+    let tasks = [];
+    for (let i = 0; i < taskList.length; i++) {
+        tasks.push(taskList[i].textContent.replace("❌", "").trim());
+    }
+
+    let subject = encodeURIComponent("Task List Summary");
+    let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
+    let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    window.location.href = mailtoLink;
+
+    alert("Task list email prepared. Please send it using your email app.");
 }
 
 function showNotification(message) {
