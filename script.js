@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (longBreakBtn) longBreakBtn.addEventListener("click", function() { startBreak(23); });
     if (customTimerBtn) customTimerBtn.addEventListener("click", setCustomTimer);
 
-    // Ensure dark mode is enabled by default and remembers preference
+    // Ensure dark mode is enabled by default
     if (localStorage.getItem("darkMode") === "enabled") {
         document.body.classList.add("dark-mode");
     }
@@ -27,7 +27,7 @@ let timer;
 let timeLeft;
 const bellSound = new Audio('bell.mp3');
 
-function startTimer(minutes, message, showGif = false, isLongBreak = false) {
+function startTimer(minutes, message, showGif = false) {
     clearInterval(timer);
     timeLeft = minutes * 60;
     updateDisplay();
@@ -57,7 +57,7 @@ function startWorkSession() {
 }
 
 function startBreak(minutes) {
-    startTimer(minutes, "Break over! Ready for another work session?", false, minutes === 23);
+    startTimer(minutes, "Break over! Ready for another work session?", false);
 }
 
 function setCustomTimer() {
