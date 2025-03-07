@@ -23,6 +23,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+function sendTaskList() {
+    console.log("Send Task List button clicked");
+
+    let email = prompt("Enter the email address to send the task list:");
+    if (!email) {
+        alert("Email not entered. Task list not sent.");
+        return;
+    }
+
+    let taskList = document.getElementById("taskList").getElementsByTagName("li");
+    if (taskList.length === 0) {
+        alert("No tasks to send.");
+        return;
+    }
+
+    let tasks = [];
+    for (let i = 0; i < taskList.length; i++) {
+        tasks.push(taskList[i].textContent.replace("❌", "").trim());
+    }
+
+    let subject = encodeURIComponent("Task List Summary");
+    let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
+    let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    window.open(mailtoLink, "_blank");
+
+    alert("Task list email prepared. Please send it using your email app.");
+}
+
 function startTimer(minutes, message, showGif = false, isLongBreak = false) {
     clearInterval(timer);
     timeLeft = minutes * 60;
@@ -113,53 +142,4 @@ function addTask() {
     taskInput.value = "";
 
     console.log("Task added:", task);
-}
-
-function sendTaskList() {
-    console.log("Send Task List button clicked");
-
-    let email = prompt("Enter the email address to send the task list:");
-    if (!email) {
-        alert("Email not entered. Task list not sent.");
-        return;
-    }
-
-    let taskList = document.getElementById("taskList").getElementsByTagName("li");
-    if (taskList.length === 0) {
-        alert("No tasks to send.");
-        return;
-    }
-
-    let tasks = [];
-    for (let i = 0; i < taskList.length; i++) {
-        tasks.push(taskList[i].textContent.replace("❌", "").trim());
-    }
-
-    let subject = encodeURIComponent("Task List Summary");
-    let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
-    let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-
-    window.location.href = mailtoLink;
-
-    alert("Task list email prepared. Please send it using your email app.");
-}
-
-function showNotification(message) {
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                new Notification("Time's Up!", { body: message });
-            }
-        });
-    } else {
-        alert(message);
-    }
-}
-
-function showMrRogersGif() {
-    const img = document.createElement("img");
-    img.src = "https://tbeezy1985.github.io/mr-rogers-timer/assets/mr-rogers-proud-of-you.gif";
-    img.style.width = "300px";
-    img.style.marginTop = "20px";
-    document.body.appendChild(img);
 }
