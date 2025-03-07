@@ -119,7 +119,7 @@ function sendTaskList() {
     let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
     let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
 
-    window.open(mailtoLink, "_blank");
+    window.location.href = mailtoLink;
 }
 
 function showNotification(message) {
