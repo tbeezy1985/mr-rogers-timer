@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (sendTaskBtn) sendTaskBtn.addEventListener("click", sendTaskList);
     if (darkModeToggle) darkModeToggle.addEventListener("click", toggleDarkMode);
     if (startWorkBtn) startWorkBtn.addEventListener("click", startWorkSession);
-    if (shortBreakBtn) shortBreakBtn.addEventListener("click", () => startBreak(5));
-    if (longBreakBtn) longBreakBtn.addEventListener("click", () => startBreak(23));
+    if (shortBreakBtn) shortBreakBtn.addEventListener("click", function() { startBreak(5); });
+    if (longBreakBtn) longBreakBtn.addEventListener("click", function() { startBreak(23); });
     if (customTimerBtn) customTimerBtn.addEventListener("click", setCustomTimer);
 
     // Ensure dark mode is enabled by default and remembers preference
@@ -23,47 +23,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function sendTaskList() {
-    console.log("Send Task List button clicked");
-
-    let email = prompt("Enter the email address to send the task list:");
-    if (!email) {
-        alert("Email not entered. Task list not sent.");
-        return;
-    }
-
-    let taskList = document.getElementById("taskList").getElementsByTagName("li");
-    if (taskList.length === 0) {
-        alert("No tasks to send.");
-        return;
-    }
-
-    let tasks = [];
-    for (let i = 0; i < taskList.length; i++) {
-        tasks.push(taskList[i].textContent.replace("❌", "").trim());
-    }
-
-    let subject = encodeURIComponent("Task List Summary");
-    let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
-    let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
-
-    window.open(mailtoLink, "_blank");
-
-    alert("Task list email prepared. Please send it using your email app.");
-}
+let timer;
+let timeLeft;
+const bellSound = new Audio('bell.mp3');
 
 function startTimer(minutes, message, showGif = false, isLongBreak = false) {
     clearInterval(timer);
     timeLeft = minutes * 60;
     updateDisplay();
-
-    if (isLongBreak) {
-        let goToNetflix = confirm("Would you like to watch a show on Netflix during your break? Click 'OK' to go to Netflix or 'Cancel' to start the timer.");
-        if (goToNetflix) {
-            window.open("https://www.netflix.com/browse", "_blank");
-            return;
-        }
-    }
 
     timer = setInterval(() => {
         timeLeft--;
@@ -86,4 +53,91 @@ function updateDisplay() {
 }
 
 function startWorkSession() {
-    start
+    startTimer(20, "Mr. Brauker: 'I'm proud of you, you know that.'\nStart your break.", true);
+}
+
+function startBreak(minutes) {
+    startTimer(minutes, "Break over! Ready for another work session?", false, minutes === 23);
+}
+
+function setCustomTimer() {
+    let minutes = prompt("Enter timer duration in minutes:");
+    if (minutes && !isNaN(minutes) && minutes > 0) {
+        startTimer(parseInt(minutes), "Custom timer completed!", true);
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+}
+
+function addTask() {
+    let taskInput = document.getElementById("taskInput");
+    let taskList = document.getElementById("taskList");
+
+    let task = taskInput.value.trim();
+    if (task === "") {
+        alert("Please enter a task before adding.");
+        return;
+    }
+
+    let li = document.createElement("li");
+    li.textContent = task;
+
+    let removeButton = document.createElement("button");
+    removeButton.textContent = "❌";
+    removeButton.style.marginLeft = "10px";
+    removeButton.onclick = function () {
+        taskList.removeChild(li);
+    };
+
+    li.appendChild(removeButton);
+    taskList.appendChild(li);
+    taskInput.value = "";
+}
+
+function sendTaskList() {
+    let email = prompt("Enter the email address to send the task list:");
+    if (!email) {
+        alert("Email not entered. Task list not sent.");
+        return;
+    }
+
+    let taskList = document.getElementById("taskList").getElementsByTagName("li");
+    if (taskList.length === 0) {
+        alert("No tasks to send.");
+        return;
+    }
+
+    let tasks = [];
+    for (let i = 0; i < taskList.length; i++) {
+        tasks.push(taskList[i].textContent.replace("❌", "").trim());
+    }
+
+    let subject = encodeURIComponent("Task List Summary");
+    let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
+    let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    window.open(mailtoLink, "_blank");
+}
+
+function showNotification(message) {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                new Notification("Time's Up!", { body: message });
+            }
+        });
+    } else {
+        alert(message);
+    }
+}
+
+function showMrRogersGif() {
+    const img = document.createElement("img");
+    img.src = "mr-rogers-proud-of-you.gif";
+    img.style.width = "300px";
+    img.style.marginTop = "20px";
+    document.body.appendChild(img);
+}
