@@ -98,11 +98,16 @@ function addTask() {
 }
 
 function sendTaskList() {
-    let email = prompt("Enter the email address to send the task list:");
+    let savedEmail = localStorage.getItem("savedEmail") || ""; // Retrieve saved email
+    let email = prompt("Enter the email address to send the task list:", savedEmail); // Pre-fills with last used email
+    
     if (!email) {
         alert("Email not entered. Task list not sent.");
         return;
     }
+
+    // Save the new email for next time
+    localStorage.setItem("savedEmail", email);
 
     let taskList = document.getElementById("taskList").getElementsByTagName("li");
     if (taskList.length === 0) {
@@ -119,8 +124,10 @@ function sendTaskList() {
     let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
     let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
 
+    // Open the email client
     window.location.href = mailtoLink;
 }
+
 
 function showNotification(message) {
     if ("Notification" in window) {
