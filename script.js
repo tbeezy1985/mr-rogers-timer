@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Script loaded, adding event listeners.");
-
     let addTaskBtn = document.getElementById("addTaskBtn");
     let sendTaskBtn = document.getElementById("sendTaskBtn");
     let darkModeToggle = document.getElementById("toggleDarkModeBtn");
@@ -13,14 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (sendTaskBtn) sendTaskBtn.addEventListener("click", sendTaskList);
     if (darkModeToggle) darkModeToggle.addEventListener("click", toggleDarkMode);
     if (startWorkBtn) startWorkBtn.addEventListener("click", startWorkSession);
-    if (shortBreakBtn) shortBreakBtn.addEventListener("click", function() { startBreak(5); });
-    if (longBreakBtn) longBreakBtn.addEventListener("click", function() { startBreak(23); });
+    if (shortBreakBtn) shortBreakBtn.addEventListener("click", function () { startBreak(5); });
+    if (longBreakBtn) longBreakBtn.addEventListener("click", function () { startBreak(23); });
     if (customTimerBtn) customTimerBtn.addEventListener("click", setCustomTimer);
 
-    // Ensure dark mode is enabled by default
-    if (localStorage.getItem("darkMode") === "enabled") {
-        document.body.classList.add("dark-mode");
-    }
+    // Set dark mode by default
+    document.body.classList.add("dark-mode");
+    localStorage.setItem("darkMode", "enabled");
 });
 
 let timer;
@@ -29,12 +26,14 @@ const bellSound = new Audio('bell.mp3');
 
 function startTimer(minutes, message, showGif = false) {
     clearInterval(timer);
-    timeLeft = minutes * 60;
-    updateDisplay();
 
-    timer = setInterval(() => {
-        timeLeft--;
+    const endTime = Date.now() + minutes * 60 * 1000;
+
+    function tick() {
+        const timeLeftMs = endTime - Date.now();
+        timeLeft = Math.max(0, Math.ceil(timeLeftMs / 1000));
         updateDisplay();
+
         if (timeLeft <= 0) {
             clearInterval(timer);
             bellSound.play().catch(error => console.log("Audio play failed:", error));
@@ -43,7 +42,10 @@ function startTimer(minutes, message, showGif = false) {
                 showMrRogersGif();
             }
         }
-    }, 1000);
+    }
+
+    tick(); // Initial display
+    timer = setInterval(tick, 1000);
 }
 
 function updateDisplay() {
@@ -98,15 +100,13 @@ function addTask() {
 }
 
 function sendTaskList() {
-    let savedEmail = localStorage.getItem("savedEmail") || ""; // Retrieve saved email
-    let email = prompt("Enter the email address to send the task list:", savedEmail); // Pre-fills with last used email
-    
+    let savedEmail = localStorage.getItem("savedEmail") || "";
+    let email = prompt("Enter the email address to send the task list:", savedEmail);
     if (!email) {
         alert("Email not entered. Task list not sent.");
         return;
     }
 
-    // Save the new email for next time
     localStorage.setItem("savedEmail", email);
 
     let taskList = document.getElementById("taskList").getElementsByTagName("li");
@@ -124,10 +124,8 @@ function sendTaskList() {
     let body = encodeURIComponent("Here is the list of completed tasks:\n\n" + tasks.join("\n"));
     let mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
 
-    // Open the email client
     window.location.href = mailtoLink;
 }
-
 
 function showNotification(message) {
     if ("Notification" in window) {
